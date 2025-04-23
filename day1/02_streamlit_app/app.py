@@ -11,7 +11,7 @@ from config import MODEL_NAME
 from huggingface_hub import HfFolder
 
 # --- アプリケーション設定 ---
-st.set_page_config(page_title="Gemma Chatbot", layout="wide")
+st.set_page_config(page_title="Gemma Chatbot", page_icon=":computer:", layout="wide")
 
 # --- 初期化処理 ---
 # NLTKデータのダウンロード（初回起動時など）
@@ -69,6 +69,16 @@ page = st.sidebar.radio(
 if st.session_state.page == "チャット":
     if pipe:
         ui.display_chat_page(pipe)
+        # チャット履歴が存在する場合にダウンロードボタンを表示
+        if st.session_state["chat_history"]:
+            st.download_button(
+                label="チャット内容をテキストファイルで保存",
+                data=st.session_state["chat_history"],
+                file_name="chat_history.txt",
+                mime="text/plain"
+            )
+        else:
+            st.info("まだチャットが行われていません。会話を開始してください。")
     else:
         st.error("チャット機能を利用できません。モデルの読み込みに失敗しました。")
 elif st.session_state.page == "履歴閲覧":
